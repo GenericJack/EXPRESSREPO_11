@@ -1,3 +1,27 @@
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const uuid = require('uuid');
+
+const app = express();
+const PORT = 5500; 
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+
+// Serve the notes.html file
+ app.get("/notes", (req, res) => {
+    res.sendFile(path.join(__dirname, "public/notes.html"));
+  });
+  
+  // Serve the index.html file (default route)
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public/index.html"));
+  });
+
+app.use(express.static("public"));
+
 app.get("/api/notes", (req, res) => {
     // Read the contents of db.json and send it as a response
     const notes = JSON.parse(fs.readFileSync("db.json", "utf8"));
@@ -50,14 +74,7 @@ app.get("/api/notes", (req, res) => {
     }
   });
 
-  // Serve the notes.html file
-app.get("/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/notes.html"));
+  // Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
-  
-  // Serve the index.html file (default route)
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/index.html"));
-  });
-
-  app.use(express.static("public"));
